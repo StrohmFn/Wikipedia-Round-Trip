@@ -1,14 +1,14 @@
-package strohmfn.springtest;
+package strohmfn.roundTrip;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @SpringBootApplication
-public class ApiTestApp {
+public class RoundTrip {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ApiTestApp.class, args);
+		SpringApplication.run(RoundTrip.class, args);
 
 	}
 	
