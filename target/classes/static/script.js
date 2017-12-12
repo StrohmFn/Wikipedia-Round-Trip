@@ -32,15 +32,20 @@ map.on('click', function(e){
 function bnt1Click(){
 	var lat = marker.getLatLng().lat;
 	var lng = marker.getLatLng().lng;
-	var a;
+	var startNode = [3, 5];
+	var roundTripDuration = document.querySelector("#duration").value;
+	var roundTripPath;
+	var visitNodesLat = [1,3,5];
+	var visitNodesLng = [2,4,6];
+	var urlString = "https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=37.786971%7C-122.399677&format=json";
 	 $.ajax({
 		   type: "GET",
-		   url: '/hello',
+		   url: urlString,
 		   async: false,
 		   success: function(response) {
-		     a = response;
+			   roundTripPath = response;
 		  }
 	 });
-	 console.log(a);
+	 console.log(roundTripPath);
 }
 

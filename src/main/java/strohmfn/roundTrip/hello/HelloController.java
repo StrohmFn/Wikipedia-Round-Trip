@@ -1,4 +1,4 @@
-package strohmfn.springtest.hello;
+package strohmfn.roundTrip.hello;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
