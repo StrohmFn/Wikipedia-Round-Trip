@@ -37,7 +37,7 @@ function bnt1Click(){
 	var roundTripPath;
 	var visitNodesLat = [1,3,5];
 	var visitNodesLng = [2,4,6];
-	var urlString = "https://en.wikipedia.org/w/api.php?action=query&list=geosearch&gsradius=10000&gscoord=37.786971%7C-122.399677&format=json";
+	var urlString = "/calc/" + startNode + "/" + roundTripDuration + "/" + visitNodesLat + "/" + visitNodesLng;
 	 $.ajax({
 		   type: "GET",
 		   url: urlString,
