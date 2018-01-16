@@ -29,14 +29,14 @@ map.on('click', function(e){
 
 });
 
-function bnt1Click(){
+function btnCalculateClick(){
 	var lat = marker.getLatLng().lat;
 	var lng = marker.getLatLng().lng;
-	var startNode = [3, 5];
+	var startNode = [lat, lng];
 	var roundTripDuration = document.querySelector("#duration").value;
-	var roundTripPath;
 	var visitNodesLat = [1,3,5];
 	var visitNodesLng = [2,4,6];
+	var roundTripPath;
 	var urlString = "/calc/" + startNode + "/" + roundTripDuration + "/" + visitNodesLat + "/" + visitNodesLng;
 	 $.ajax({
 		   type: "GET",
