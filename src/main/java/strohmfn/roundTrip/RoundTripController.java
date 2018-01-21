@@ -12,13 +12,21 @@ import java.util.Queue;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@SpringBootApplication
 @RestController
 public class RoundTripController {
 
+	public static void main(String[] args) {
+		SpringApplication.run(RoundTripController.class, args);
+
+	}
+	
 	private int[][] edges;
 	private double[][] vertices;
 	private int[] offsets;
