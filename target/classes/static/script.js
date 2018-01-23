@@ -1,6 +1,4 @@
-$(document)
-		.ready(
-				function() {
+
 
 					var map = L.map('leafletMap');
 
@@ -39,6 +37,7 @@ $(document)
 					});
 
 					function btnCalculateClick() {
+						var latlngs;
 						var lat = marker.getLatLng().lat;
 						var lng = marker.getLatLng().lng;
 						var startNode = [ lat, lng ];
@@ -55,10 +54,12 @@ $(document)
 							url : urlString,
 							async : false,
 							success : function(response) {
-								roundTripPath = response;
+		                        //split the response-string into a path
+		                        latlngs = response.split(",").map(function (e) {
+		                            return e.split("_").map(Number);
+		                        });
+		                        var polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
+		                        map.fitBounds(polyline.getBounds());
 							}
 						});
-						console.log(roundTripPath);
 					}
-
-				});
