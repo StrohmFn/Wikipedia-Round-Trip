@@ -34,7 +34,7 @@ public class Graph {
 		int nearestNodeIndex = -1;
 		double shortestDist = Double.MAX_VALUE;
 		for (int nodeID : gridCell) {
-			double dist = euclideanDist(nodes[nodeID], latLng);
+			double dist = euclideanDist(nodes[0][nodeID], nodes[1][nodeID], latLng[0], latLng[1]);
 			if(dist < shortestDist) {
 				shortestDist = dist;
 				nearestNodeIndex = nodeID;
@@ -53,9 +53,8 @@ public class Graph {
 			 * array[1] value (cost of the path) is prioritized.
 			 */
 			Queue<int[]> frontier = new PriorityQueue<int[]>((a, b) -> a[1] - b[1]);
-			HashMap<Integer, Integer> dist = new HashMap<Integer, Integer>();
-			HashMap<Integer, Integer> prev = new HashMap<Integer, Integer>();
-			dist.put(start, 0);
+			int[] dist = new int[edges[0].length];
+			int[] prev = new int[edges[0].length];
 			int startNode[] = { start, 0 };
 			frontier.add(startNode);
 			while (!frontier.isEmpty()) {
@@ -65,42 +64,39 @@ public class Graph {
 				}
 				int offset = offsets[currentNode[0]];
 				if (offsets[currentNode[0]] != -1) {
-					int[] edge = edges[offset];
-					while (edge[0] == currentNode[0]) {
-						int newDist = dist.get(edge[0]) + edge[2];
-						if (!dist.containsKey(edge[1]) || newDist < dist.get(edge[1])) {
-							dist.put(edge[1], newDist);
-							prev.put(edge[1], edge[0]);
-							int newNode[] = { edge[1], newDist };
+					while (edges[0][offset] == currentNode[0]) {
+						int newDist = dist[edges[0][offset]] + edges[2][offset];
+						if (dist[edges[1][offset]] == 0 || newDist < dist[edges[1][offset]]) {
+							dist[edges[1][offset]] = newDist;
+							prev[edges[1][offset]] = edges[0][offset];
+							int newNode[] = { edges[1][offset], newDist };
 							frontier.add(newNode);
 						}
 						offset++;
-						if (offset >= edges.length) {
+						if (offset >= edges[0].length) {
 							break;
 						}
-						edge = edges[offset];
 					}
 				}
 			}
-			if (!prev.containsKey(dest)) {
+			if (prev[dest] == 0) {
 				return "No path found from Node '" + start + "' to Node '" + dest + "'!";
 			}
 			return generateSolutionString(start, prev, dest);
 		}
 	}
 	
-	private String generateSolutionString(int start, HashMap<Integer, Integer> prev, int dest) {
+	private String generateSolutionString(int start, int[] prev, int dest) {
 		ArrayList<Integer> solutionPath = new ArrayList<Integer>();
-		int prevNode = prev.get(dest);
+		int prevNode = prev[dest];
 		solutionPath.add(prevNode);
 		while (prevNode != start) {
-			prevNode = prev.get(prevNode);
+			prevNode = prev[prevNode];
 			solutionPath.add(prevNode);
 		}
-		System.out.println(solutionPath.size());
-		String solution = nodes[dest][0] + "_" + nodes[dest][1];
+		String solution = nodes[0][dest] + "_" + nodes[1][dest];
 		for (int i = 0; i < solutionPath.size(); i+=1) {
-			solution = nodes[solutionPath.get(i)][0] + "_" + nodes[solutionPath.get(i)][1] + "," + solution;
+			solution = nodes[0][solutionPath.get(i)] + "_" + nodes[1][solutionPath.get(i)] + "," + solution;
 		}
 		solution += dest;
 		return solution;
@@ -116,17 +112,18 @@ public class Graph {
 	 * distance. Since the points are on a sphere we have to adjust the values. The
 	 * error is negligible for small distances (which we deal with).
 	 */
-	private double euclideanDist(double[] node_1, double[] node_2) {
+	private double euclideanDist(double node1_lat, double node1_lng, double node2_lat, double node2_lng) {
 		double degLen = 110.25;
-		double x = node_1[0] - node_2[0];
-		double y = (node_1[1] - node_2[1]) * Math.cos(node_2[0]);
+		double x = node1_lat - node2_lat;
+		double y = (node1_lng - node2_lng) * Math.cos(node2_lat);
 		return Math.sqrt(x * x + y * y) * degLen;
 	}
 
 	private void createGrid() {
-		for (int i = 0; i < nodes.length; i++) {
-			String gridKey = (double) Math.round(nodes[i][0] * 10) / 10 + "-"
-					+ (double) Math.round(nodes[i][1] * 10) / 10;
+		System.out.println("Creating grid...");
+		for (int i = 0; i < nodes[0].length; i++) {
+			String gridKey = (double) Math.round(nodes[0][i] * 10) / 10 + "-"
+					+ (double) Math.round(nodes[1][i] * 10) / 10;
 			if (gridCells.containsKey(gridKey)) {
 				gridCells.get(gridKey).add(i);
 			} else {
@@ -138,19 +135,25 @@ public class Graph {
 	}
 
 	private void loadMapData() {
+		System.out.println("Loading map data...");
 		try {
-			String graphPath = "C:\\Users\\Wolfen\\Desktop\\Baden-Württemberg Map";
+			String graphPath = "E:\\sts-bundle\\workspace\\WikipediaRoundTour\\resources\\germany.fmi";
 			BufferedReader bf = new BufferedReader(new FileReader(graphPath));
 			int nodesCount;
 			int edgesCount;
 			// Read number of nodes and create an array with the same size to store them.
 			String line = bf.readLine();
+			line = bf.readLine();
+			line = bf.readLine();
+			line = bf.readLine();
+			line = bf.readLine();
+			line = bf.readLine();
 			nodesCount = Integer.parseInt(line);
-			nodes = new double[nodesCount][2];
+			nodes = new double[2][nodesCount];
 			// Read number of edges and create an array with the same size to store them.
 			line = bf.readLine();
 			edgesCount = Integer.parseInt(line);
-			edges = new int[edgesCount][3];
+			edges = new int[3][edgesCount];
 			// Create offset array and init with -1 (no outgoing edge)
 			offsets = new int[nodesCount];
 			Arrays.fill(offsets, -1);
@@ -160,8 +163,8 @@ public class Graph {
 			// Read all nodes from file. Store geographic coordinates in 'nodes' array
 			while (counterNodes < nodesCount) {
 				String vertexData[] = line.split(" ");
-				nodes[counterNodes][0] = Double.parseDouble(vertexData[2]);
-				nodes[counterNodes][1] = Double.parseDouble(vertexData[3]);
+				nodes[0][counterNodes] = Double.parseDouble(vertexData[2]);
+				nodes[1][counterNodes] = Double.parseDouble(vertexData[3]);
 				counterNodes++;
 				line = bf.readLine();
 			}
@@ -170,9 +173,9 @@ public class Graph {
 			while (counterEdges < edgesCount) {
 				String edgeData[] = line.split(" ");
 				// Store start-node, dest-node and weighting in 'edges' array.
-				edges[counterEdges][0] = Integer.parseInt(edgeData[0]);
-				edges[counterEdges][1] = Integer.parseInt(edgeData[1]);
-				edges[counterEdges][2] = Integer.parseInt(edgeData[2]);
+				edges[0][counterEdges] = Integer.parseInt(edgeData[0]);
+				edges[1][counterEdges] = Integer.parseInt(edgeData[1]);
+				edges[2][counterEdges] = Integer.parseInt(edgeData[2]);
 				/*
 				 * Checks if the current edge starts from a new vertex and if so, stores the
 				 * offset of that new vertex in the 'offsets' array. 'counternodes' stores
@@ -180,8 +183,8 @@ public class Graph {
 				 * 'counternodes < edges[counterEdges][0]' is true (since edges are sorted by
 				 * their starting node).
 				 */
-				if (counterNodes < edges[counterEdges][0]) {
-					counterNodes = edges[counterEdges][0];
+				if (counterNodes < edges[0][counterEdges]) {
+					counterNodes = edges[0][counterEdges];
 					offsets[counterNodes] = counterEdges;
 				}
 				counterEdges++;

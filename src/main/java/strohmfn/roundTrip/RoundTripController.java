@@ -26,9 +26,13 @@ public class RoundTripController {
 	public String calculateRoundTrip(@PathVariable double[] startNode, @PathVariable int roundTripDuration,
 			@PathVariable double[] visitNodesLat, @PathVariable double[] visitNodesLng) {
 		double[][] visitNodes = { visitNodesLat, visitNodesLng };
+		System.out.println("Mapping coodinates to nearsest node...");
 		int node = graph.getClosestNode(startNode);
-		String  sol = graph.dijkstra(node, 5);
-		System.out.println(sol);
-		return sol;
+		int testDest = 15515186;
+		System.out.println("Calculating shortest path from start node " + node + " to destination node " + testDest + "...");
+		double startTime = System.currentTimeMillis();
+		String  solution = graph.dijkstra(7791852, testDest);
+		System.out.println("It took " + (System.currentTimeMillis()-startTime)/1000 + " seconds to calculated the shortest path!");
+		return solution;
 	}
 }
