@@ -34,19 +34,82 @@ map.on('click', function(e) {
 
 });
 
-function btnWikiClick() {
-	var lat = marker.getLatLng().lat;
-	var lng = marker.getLatLng().lng;
+var lat;
+var lng;
+var articles = {};
+var rankedArticleIDs = [];
+var displayCounter = 20;
+
+function getArticlesInRange() {
+	lat = marker.getLatLng().lat;
+	lng = marker.getLatLng().lng;
+	var articleIDs;
 	$
 			.ajax({
 				type : "GET",
-				url : "https://de.wikipedia.org/w/api.php?action=query&prop=pageviews&list=geosearch&gsradius=10000&gscoord="
+				url : "https://de.wikipedia.org/w/api.php?action=query&prop=pageviews&list=geosearch&gslimit=100&gsradius=10000&gscoord="
 						+ lat + "%7C" + lng + "&format=json",
+				async : false,
 				success : function(response) {
-					// split the response-string into a path
-					console.log(response)
+					articleIDs = response['query']['geosearch'];
 				}
 			});
+	getArticle(articleIDs);
+	rankArticles();
+}
+
+function getArticle(articleIDs) {
+	var counter = 0;
+	// We want 100 articles but can only query 20 at once due to wikimedia API
+	// limitations.
+	for (j = 0; j < 5; j++) {
+		var idString = "";
+		for (i = counter; i < (counter + 20); i++) {
+			idString += articleIDs[i]['pageid'] + "|";
+		}
+		counter += 20;
+		idString = idString.slice(0, -1);
+		var content = getContent(idString);
+		articles = Object.assign(content, articles);
+	}
+}
+
+function getContent(ids) {
+	var articles;
+	$
+			.ajax({
+				type : "GET",
+				url : "https://de.wikipedia.org/w/api.php?action=query&prop=pageviews|extracts|pageimages|coordinates&pageids="
+						+ ids
+						+ "&format=json&exintro=&explaintext=&pithumbsize=200",
+				async : false,
+				success : function(response) {
+					articles = response;
+				}
+			});
+	return articles['query']['pages']
+}
+
+function rankArticles() {
+	for ( var article in articles) {
+		var pageviews = articles[article]['pageviews']
+		var daycount = 0;
+		var avgViews = 0;
+		for ( var day in pageviews) {
+			if (pageviews[day] != null) {
+				avgViews += pageviews[day];
+				daycount++
+			}
+
+		}
+		avgViews = avgViews / daycount;
+		articles[article].avgViews = avgViews;
+		rankedArticleIDs.push([article, articles[article]['avgViews']]);
+	}
+	rankedArticleIDs.sort(function(a, b) {
+	    return b[1] - a[1];
+	});
+	console.log(rankedArticleIDs);
 }
 
 function btnCalculateClick() {
