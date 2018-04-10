@@ -19,8 +19,8 @@ public class Graph {
 	private HashMap<String, LinkedList<Integer>> gridCells = new HashMap<String, LinkedList<Integer>>();
 
 	public Graph() {
-		loadMapData();
-		createGrid();
+		//loadMapData();
+		//createGrid();
 	}
 
 	public int getClosestNode(double[] latLng) {
@@ -137,17 +137,12 @@ public class Graph {
 	private void loadMapData() {
 		System.out.println("Loading map data...");
 		try {
-			String graphPath = "E:\\sts-bundle\\workspace\\WikipediaRoundTour\\resources\\germany.fmi";
+			String graphPath = "E:\\sts-bundle\\workspace\\WikipediaRoundTour\\resources\\de.fs";
 			BufferedReader bf = new BufferedReader(new FileReader(graphPath));
 			int nodesCount;
 			int edgesCount;
 			// Read number of nodes and create an array with the same size to store them.
 			String line = bf.readLine();
-			line = bf.readLine();
-			line = bf.readLine();
-			line = bf.readLine();
-			line = bf.readLine();
-			line = bf.readLine();
 			nodesCount = Integer.parseInt(line);
 			nodes = new double[2][nodesCount];
 			// Read number of edges and create an array with the same size to store them.
@@ -163,8 +158,8 @@ public class Graph {
 			// Read all nodes from file. Store geographic coordinates in 'nodes' array
 			while (counterNodes < nodesCount) {
 				String vertexData[] = line.split(" ");
-				nodes[0][counterNodes] = Double.parseDouble(vertexData[2]);
-				nodes[1][counterNodes] = Double.parseDouble(vertexData[3]);
+				nodes[0][counterNodes] = Double.parseDouble(vertexData[1]);
+				nodes[1][counterNodes] = Double.parseDouble(vertexData[2]);
 				counterNodes++;
 				line = bf.readLine();
 			}

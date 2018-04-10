@@ -31,8 +31,8 @@ public class RoundTripController {
 		int testDest = 15515186;
 		System.out.println("Calculating shortest path from start node " + node + " to destination node " + testDest + "...");
 		double startTime = System.currentTimeMillis();
-		String  solution = graph.dijkstra(7791852, testDest);
-		System.out.println("It took " + (System.currentTimeMillis()-startTime)/1000 + " seconds to calculated the shortest path!");
+		String  solution = graph.dijkstra(node, testDest);
+		System.out.println("It took " + (System.currentTimeMillis()-startTime)/1000 + " seconds to calculate the shortest path!");
 		return solution;
 	}
 }
