@@ -22,7 +22,6 @@ map.locate({
 })
 
 map.on('click', function(e) {
-	console.log(e.latlng);
 	if (typeof (marker) === 'undefined') {
 		marker = new L.marker(e.latlng, {
 			draggable : true
@@ -30,6 +29,7 @@ map.on('click', function(e) {
 		marker.addTo(map);
 	} else {
 		marker.setLatLng(e.latlng);
+		marker.addTo(map);
 	}
 
 });
@@ -40,6 +40,20 @@ var articles = {};
 var rankedArticleIDs = [];
 var displayCounter = 0;
 var markers = [];
+var markerGroup = L.featureGroup().addTo(map).on("click", groupClick);
+
+function groupClick(event) {
+	var id = event.layer.id;
+	console.log(articles[id]);
+	var text = articles[id]['extract'];
+	$("#description").text(text);
+	var thumbnail = articles[id]['thumbnail'];
+	if (thumbnail != undefined) {
+		document.getElementById("thumbnail").src = thumbnail['source'];
+	} else {
+		document.getElementById("thumbnail").src = "";
+	}
+}
 
 function getArticlesInRange() {
 	lat = marker.getLatLng().lat;
@@ -48,7 +62,7 @@ function getArticlesInRange() {
 	$
 			.ajax({
 				type : "GET",
-				url : "https://de.wikipedia.org/w/api.php?action=query&prop=pageviews&list=geosearch&gslimit=100&gsradius=10000&gscoord="
+				url : "https://de.wikipedia.org/w/api.php?action=query&prop=pageviews&list=geosearch&gslimit=200&gsradius=10000&gscoord="
 						+ lat + "%7C" + lng + "&format=json",
 				async : false,
 				success : function(response) {
@@ -58,21 +72,18 @@ function getArticlesInRange() {
 	getArticle(articleIDs);
 	rankArticles();
 	map.removeLayer(marker)
-	map.setView([ lat, lng ], 12);
+	map.setView([ lat, lng ], 14);
 	addMarkers();
 }
 
 function addMarkers() {
 	for (i = displayCounter; i < (displayCounter + 20); i++) {
 		var articleID = rankedArticleIDs[i][0];
-		console.log(articles[articleID]);
 		if (articles[articleID]['coordinates'] != undefined) {
 			var coords = articles[articleID]['coordinates'][0];
-			var marker = new L.marker([ coords.lat, coords.lon ], {
-				draggable : false
-			});
-			marker.bindPopup(articles[articleID]['title']);
-			marker.addTo(map);
+			var marker = L.marker([ coords.lat, coords.lon ])
+			marker.addTo(markerGroup).bindTooltip(articles[articleID]['title']);
+			marker.id = articleID;
 			markers.push(marker);
 		}
 	}
@@ -81,9 +92,9 @@ function addMarkers() {
 
 function getArticle(articleIDs) {
 	var counter = 0;
-	// We want 100 articles but can only query 20 at once due to wikimedia API
+	// We want 200 articles but can only query 20 at once due to wikimedia API
 	// limitations.
-	for (j = 0; j < 5; j++) {
+	for (j = 0; j < 10; j++) {
 		var idString = "";
 		for (i = counter; i < (counter + 20); i++) {
 			idString += articleIDs[i]['pageid'] + "|";
@@ -102,7 +113,7 @@ function getContent(ids) {
 				type : "GET",
 				url : "https://de.wikipedia.org/w/api.php?action=query&prop=pageviews|extracts|pageimages|coordinates&pageids="
 						+ ids
-						+ "&format=json&exintro=&explaintext=&pithumbsize=200",
+						+ "&format=json&exintro=&explaintext=&pithumbsize=400",
 				async : false,
 				success : function(response) {
 					articles = response;

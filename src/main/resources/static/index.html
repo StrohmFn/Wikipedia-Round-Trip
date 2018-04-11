@@ -6,8 +6,10 @@
 
 <meta name="author" content="Florian Strohm" />
 <meta name="description" content="" />
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 
 <link rel="stylesheet" href="style.css" type="text/css" />
+
 
 <link rel="stylesheet"
 	href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
@@ -24,10 +26,29 @@
 </head>
 <body>
 
-	<div id="leafletMap"></div>
+<div class="float-left-area">
+<div class="inner-left">
+
+<img id="thumbnail" src="" style="width:100%">
+<p id="description">  </p>
+<button id="getArticles" type="button"  class="btn btn-primary" onclick="getArticlesInRange()">Show Wikipedia articles</button>
+
+</div>
+</div>
+
+<div class="float-right-area">
+<div class="inner-right">
+
+<div id="leafletMap"></div>
+
+</div>
+</div>
+
+<div class="clear-floated"></div>
+
+	
 <script src="script.js"></script>
 
-<button type="button" onclick="getArticlesInRange()">Show Wikipedia articles</button>
 
 </body>
 </html>

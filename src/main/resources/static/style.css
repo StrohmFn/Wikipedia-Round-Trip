@@ -1,1 +1,47 @@
- #leafletMap { height: 70em; }
+#leafletMap {
+	height: 100%;
+	width: 100%;
+}
+
+html, body {
+	height: 100%;
+	width: 100%;
+	background-color: LightSlateGrey;
+}
+
+.float-left-area {
+	background-color: #333;
+	height: 100%;
+	width: 20%;
+	float: left;
+}
+
+.float-right-area {
+	height: 100%;
+	width: 80%;
+	float: left;
+}
+
+.inner-left {
+	position: relative; 
+	padding : 5% 5% 5% 5%;
+	height: 100%;
+	min-height: 60px;
+	color: white;
+	padding: 5% 5% 5% 5%;
+}
+
+.inner-right {
+	height: 100%;
+}
+
+p {
+	font-family: Helvetica;
+	font-size: 12px;
+}
+
+#getArticles {
+	position: absolute;
+	bottom: 5%;
+	right: 22%;
+}
