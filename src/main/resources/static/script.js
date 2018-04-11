@@ -38,7 +38,8 @@ var lat;
 var lng;
 var articles = {};
 var rankedArticleIDs = [];
-var displayCounter = 20;
+var displayCounter = 0;
+var markers = [];
 
 function getArticlesInRange() {
 	lat = marker.getLatLng().lat;
@@ -56,6 +57,26 @@ function getArticlesInRange() {
 			});
 	getArticle(articleIDs);
 	rankArticles();
+	map.removeLayer(marker)
+	map.setView([ lat, lng ], 12);
+	addMarkers();
+}
+
+function addMarkers() {
+	for (i = displayCounter; i < (displayCounter + 20); i++) {
+		var articleID = rankedArticleIDs[i][0];
+		console.log(articles[articleID]);
+		if (articles[articleID]['coordinates'] != undefined) {
+			var coords = articles[articleID]['coordinates'][0];
+			var marker = new L.marker([ coords.lat, coords.lon ], {
+				draggable : false
+			});
+			marker.bindPopup(articles[articleID]['title']);
+			marker.addTo(map);
+			markers.push(marker);
+		}
+	}
+	displayCounter += 20;
 }
 
 function getArticle(articleIDs) {
@@ -102,14 +123,15 @@ function rankArticles() {
 			}
 
 		}
-		avgViews = avgViews / daycount;
+		if (avgViews > 0) {
+			avgViews = avgViews / daycount;
+		}
 		articles[article].avgViews = avgViews;
-		rankedArticleIDs.push([article, articles[article]['avgViews']]);
+		rankedArticleIDs.push([ article, articles[article]['avgViews'] ]);
 	}
 	rankedArticleIDs.sort(function(a, b) {
-	    return b[1] - a[1];
+		return b[1] - a[1];
 	});
-	console.log(rankedArticleIDs);
 }
 
 function btnCalculateClick() {
