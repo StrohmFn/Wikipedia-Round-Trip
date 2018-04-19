@@ -1,80 +1,83 @@
 package strohmfn.roundTrip;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TravelingSalesPerson {
 
 
-	private ArrayList<Integer> outputArray = new ArrayList<Integer>();
-	private int g[][], p[][], npow, N, d[][];
+	private ArrayList<Integer> roundtrip = new ArrayList<Integer>();
+	private int subPathCost[][], pickedNode[][], npow, numberNodes, edgeCost[][];
 	public static long time;
 
-	public ArrayList<Integer> computeTSP(int[][] inputArray) {
+	public ArrayList<Integer> computeRoundtrip(int[][] inputArray) {
 		long start = System.currentTimeMillis();
 
-		N = inputArray.length;
-		npow = (int) Math.pow(2, N);
-		g = new int[N][npow];
-		p = new int[N][npow];
-		d = inputArray;
+		numberNodes = inputArray.length;
+		npow = (int) Math.pow(2, numberNodes);
+		subPathCost = new int[numberNodes][npow];
+		pickedNode = new int[numberNodes][npow];
+		edgeCost = inputArray;
 
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < npow; j++) {
-				g[i][j] = -1;
-				p[i][j] = -1;
-			}
+		// Initialize with invalid value -1. Used to check when to break out of recursion.
+		for (int i = 0; i < numberNodes; i++) {
+			Arrays.fill(subPathCost[i], -1);
+			Arrays.fill(pickedNode[i], -1);
 		}
 
-		// initialize based on distance matrix
-		for (int i = 0; i < N; i++) {
-			g[i][0] = inputArray[i][0];
+		// Initialize first row of the table with costs from each edge i to the start node.
+		for (int i = 0; i < numberNodes; i++) {
+			subPathCost[i][0] = inputArray[i][0];
 		}
 
-		int result = tsp(0, npow - 2);
-		outputArray.add(0);
-		getPath(0, npow - 2);
-		outputArray.add(0);
-		//outputArray.add(result);
+		tspRecursive(0, npow - 2);
+		// Reconstruct path.
+		roundtrip.add(0);
+		getPathRecursive(0, npow - 2);
+		roundtrip.add(0);
 
 		long end = System.currentTimeMillis();
 		time = (end - start) / 1000;
 		System.out.println("Time needed for TSP computation: " + time + "s");
-		return outputArray;
+		return roundtrip;
 	}
 
-	private int tsp(int start, int set) {
-		int masked, mask, result = -1, temp;
+	private int tspRecursive(int start, int currentSet) {
+		int cost = -1;
+		int tempCost;
+		int newSet;
+		int nodeMask;
 		
-		if(g[start][set] != -1) {
-			return g[start][set];
+		if(subPathCost[start][currentSet] != -1) {
+			return subPathCost[start][currentSet];
 		}
 		else {
-			for(int x = 0; x < N; x++) {
-				mask =  npow - 1 - (int) Math.pow(2, x);
-				masked = set & mask;
-				if(masked != set) {
-					temp = d[start][x] + tsp(x,masked);
-					if(result == -1 || result > temp) {
-						result = temp;
-						p[start][set] = x;
+			for(int node = 0; node < numberNodes; node++) {
+				nodeMask =  npow - 1 - (int) Math.pow(2, node);
+				newSet = currentSet & nodeMask;
+				if(newSet != currentSet) {
+					tempCost = edgeCost[start][node] + tspRecursive(node,newSet);
+					if(cost == -1 || cost > tempCost) {
+						cost = tempCost;
+						pickedNode[start][currentSet] = node;
 					}
 				}
 			}
-			g[start][set] = result;
-			return result;
+			subPathCost[start][currentSet] = cost;
+			return cost;
 		}
 	}
 	
-	private void getPath(int start, int set) {
-		if(p[start][set] == -1) {
+	private void getPathRecursive(int start, int set) {
+		if(pickedNode[start][set] == -1) {
 			return;
 		}
 		
-		int x = p[start][set];
-		int mask = npow - 1 - (int) Math.pow(2, x);
-		int masked = set & mask;
+		int node = pickedNode[start][set];
+		int nodeMask = npow - 1 - (int) Math.pow(2, node);
+		int newSet = set & nodeMask;
 		
-		outputArray.add(x);
-		getPath(x,masked);
+		roundtrip.add(node);
+		getPathRecursive(node,newSet);
 	}
 }

@@ -37,7 +37,7 @@ public class Graph {
 			}
 		}
 		
-		ArrayList<Integer> result = new TravelingSalesPerson().computeTSP(costs);
+		ArrayList<Integer> result = new TravelingSalesPerson().computeRoundtrip(costs);
 		
 		int[] nodes = new int[numberNodes];
 		for (int i = 0; i < numberNodes; i++) {
@@ -48,9 +48,7 @@ public class Graph {
 		for (int i = 0; i < result.size()-1; i++) {
 			int from = nodes[result.get(i)];
 			int to = nodes[result.get(i+1)];
-			System.out.println("BEGINN " + i);
 			solution += dijkstra(from, to) + ",";
-			System.out.println("ENDE " + i);
 		}
 		solution = solution.substring(0, solution.length() - 1);
 		System.out.println("Shortest Roundtrip Calculated!");
@@ -78,7 +76,6 @@ public class Graph {
 	}
 
 	private String dijkstra(int start, int dest) {
-		System.out.println("SHEISH1");
 		// Check if start equals destination -> shortest path is trivial.
 		if (start == dest) {
 			return "Start == Destination";
