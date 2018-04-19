@@ -23,10 +23,9 @@ html, body {
 }
 
 .inner-left {
-	position: relative; 
-	padding : 5% 5% 5% 5%;
+	position: relative;
+	padding: 5% 5% 5% 5%;
 	height: 100%;
-	min-height: 60px;
 	color: white;
 	padding: 5% 5% 5% 5%;
 }
@@ -35,13 +34,63 @@ html, body {
 	height: 100%;
 }
 
-p {
+h4 {
+	padding-top: 5%;
 	font-family: Helvetica;
-	font-size: 12px;
 }
 
-#getArticles {
+#thumbnail {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	max-height: 30%;
+	max-width: 100%;
+}
+
+#description {
+	padding-top: 2%;
+	font-family: Helvetica;
+	font-size: 12px;
+	height: 50%;
+	overflow: auto;
+}
+
+.row {
 	position: absolute;
 	bottom: 5%;
-	right: 22%;
+}
+
+#getInitArticles{
+	position: absolute;
+	top: 50%;
+  	transform: translateY(-50%);
+}
+
+#reset, #showMoreArticles, #calculateTSP {
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	margin: 10px;
+}
+
+.loader {
+	margin: 0 auto;
+	border: 16px solid #333;
+	border-radius: 50%;
+	border-top: 16px solid #428bca;
+	border-bottom: 16px solid #428bca;
+	width: 120px;
+	height: 120px;
+	-webkit-animation: spin 2s linear infinite;
+	animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

@@ -6,7 +6,10 @@
 
 <meta name="author" content="Florian Strohm" />
 <meta name="description" content="" />
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+	integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+	crossorigin="anonymous">
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -15,8 +18,8 @@
 	href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
 	integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
 	crossorigin="" />
-	
-	<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
 
 <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
 	integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
@@ -24,31 +27,57 @@
 
 
 </head>
-<body>
+<body id="body">
 
-<div class="float-left-area">
-<div class="inner-left">
+	<div class="float-left-area">
+		<div class="inner-left">
+			<img id="thumbnail"
+				src="https://upload.wikimedia.org/wikipedia/commons/8/80/Wikipedia-logo-v2.svg">
+			<h4>
+				<a href="" id="headline" target="_blank"> </a>
+			</h4>
+			<p id="description">Select any location on the map to set a
+				marker. Click the 'Get Articles' button to retrieve Wikipedia
+				articles (represented as markers) around your selection. Left click
+				on such a marker to get informations of that particular article.
+				Right click a marker to select it. If you select more than two
+				articles, you can calculate a rountrip visiting all selected
+				Wikipedia articles!</p>
 
-<img id="thumbnail" src="" style="width:100%">
-<p id="description">  </p>
-<button id="getArticles" type="button"  class="btn btn-primary" onclick="getArticlesInRange()">Show Wikipedia articles</button>
+			<div class="loader" id="loader" Style="display: none"></div>
 
-</div>
-</div>
+			<button id="getInitArticles" type="button" Style="width: 90%;"
+				class="btn btn-primary" onclick="getArticlesInRange()">Get
+				Articles</button>
+			<div class="row">
+				<div class="col-sm-12 text-center">
+					<button id="showMoreArticles" type="button"
+						Style="width: 41.5%; display: none" class="btn btn-primary"
+						onclick="addMarkers()">More Wikis</button>
+					<button id="reset" type="button"
+						Style="width: 41.5%; display: none" class="btn btn-danger"
+						onclick="reset()">Reset</button>
+					<button id="calculate" type="button"
+						Style="width: 90%; display: none" class="btn btn-success"
+						onclick="calculateTour()">Calculate Tour</button>
+				</div>
+			</div>
 
-<div class="float-right-area">
-<div class="inner-right">
 
-<div id="leafletMap"></div>
+		</div>
+	</div>
 
-</div>
-</div>
+	<div class="float-right-area">
+		<div class="inner-right">
+			<nav class="navbar navbar-light"></nav>
+			<div id="leafletMap"></div>
 
-<div class="clear-floated"></div>
+		</div>
+	</div>
 
-	
-<script src="script.js"></script>
+	<div class="clear-floated"></div>
 
+	<script src="script.js"></script>
 
 </body>
 </html>
