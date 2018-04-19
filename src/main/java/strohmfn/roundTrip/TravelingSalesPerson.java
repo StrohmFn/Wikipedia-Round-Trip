@@ -3,42 +3,7 @@ package strohmfn.roundTrip;
 import java.util.ArrayList;
 
 public class TravelingSalesPerson {
-	
-	public static void main(String[] args) {
-		TravelingSalesPerson tsp = new TravelingSalesPerson();
-		int[][] in = new int[5][5];
-		in[0][0] = 0;
-		in[1][1] = 0;
-		in[2][2] = 0;
-		in[3][3] = 0;
-		in[4][4] = 0;
-		in[0][1] = 9;
-		in[0][2] = 8;
-		in[0][3] = 999;
-		in[0][4] = 7;
-		in[1][0] = 15;
-		in[1][2] = 999;
-		in[1][3] = 999;
-		in[1][4] = 999;
-		in[2][0] = 6;
-		in[2][1] = 5;
-		in[2][3] = 999;
-		in[2][4] = 4;
-		in[3][0] = 999;
-		in[3][1] = 999;
-		in[3][2] = 3;
-		in[3][4] = 999;
-		in[4][0] = 999;
-		in[4][1] = 2;
-		in[4][2] = 999;
-		in[4][3] = 3;
-//		for (int i = 0; i < in.length; i++) {
-//			for (int j = 0; j < in.length; j++) {
-//				in[i][j] = 5;
-//			}
-//		}
-		System.out.println(tsp.computeTSP(in));
-	}
+
 
 	private ArrayList<Integer> outputArray = new ArrayList<Integer>();
 	private int g[][], p[][], npow, N, d[][];
@@ -68,7 +33,8 @@ public class TravelingSalesPerson {
 		int result = tsp(0, npow - 2);
 		outputArray.add(0);
 		getPath(0, npow - 2);
-		outputArray.add(result);
+		outputArray.add(0);
+		//outputArray.add(result);
 
 		long end = System.currentTimeMillis();
 		time = (end - start) / 1000;
