@@ -19,7 +19,6 @@ public class RoundTripController {
 	Graph graph = Graph.getInstance();
 	Grid grid = Grid.getInstance(graph.getNodes());
 
-	// TODO handle nullpointer (node id -1)
 	@RequestMapping("/calc/{visitNodesLat}/{visitNodesLon:.+}")
 	public String calculateRoundTrip(@PathVariable double[] visitNodesLat, @PathVariable double[] visitNodesLon) {
 		System.out.println("Calculating Roundtrip...");
