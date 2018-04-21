@@ -1,8 +1,8 @@
-var instructionString = "Select any location on the map to set a marker. " + 
-"Click the 'Get Articles' button to retrieve Wikipedia articles (represented as markers) around your selection. " + 
-"Left click on such a marker to get informations of that particular article. " + 
-"Right click a marker to select it. If you select more than two articles, you can calculate a rountrip visiting all selected Wikipedia articles!" + 
-"With the button 'More Wikis' you can retrieve more Wikipedia articles than already shown."
+var description = "Select any location on the map to set a marker. " +
+		"Click the 'Get Articles' button to retrieve Wikipedia articles (represented as markers) around your selection. " +
+		"Left click on such a marker to get informations of that particular article. Right click a marker to select it. " +
+		"If you select more than two articles (at most 21), you can calculate a round trip visiting all selected Wikipedia articles! " +
+		"With the button 'More Wikis' you can retrieve more Wikipedia articles than already shown."
 
 var redIcon = new L.Icon({
 	  iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
@@ -47,18 +47,22 @@ function loadMap(){
 
 function locate(){
 	map.locate({
-		setView : true
+		setView : true,
+		maxZoom : 15
 	})
 }
 
 map.on('click', function(e) {
 	if (typeof (marker) === 'undefined') {
+		map.stopLocate()
 		marker = new L.marker(e.latlng, {draggable : true});
 		marker.addTo(map);
 	} else {
 		marker.setLatLng(e.latlng);
 	}
 	if(selectedMarker != undefined){
+		document.getElementById("rankedArticles").style.display='block';
+		$("#description").text("");
 		var id = selectedMarker.id
 		map.removeLayer(selectedMarker)
 		var newMarker;
@@ -71,8 +75,12 @@ map.on('click', function(e) {
 		newMarker.id = id;
 		selectedMarker = undefined;
 	}
-	$("#description").text(instructionString);
-	$("#headline").text("");
+	if(displayCounter != 0){
+		$("#headline").text("Wikipedia Articles");
+	}else{
+		$("#headline").text("Wikipedia Round Trip");
+	}
+	document.getElementById("headline").href = "https://www.wikipedia.de/";
 	document.getElementById("thumbnail").src = "https://upload.wikimedia.org/wikipedia/commons/8/80/Wikipedia-logo-v2.svg";
 });
 
@@ -84,11 +92,12 @@ function reset(){
 	loadMap();
 	locate();
 	
+	$("#rankedArticles").empty();
 	articles = {};
 	rankedArticleIDs = [];
 	displayCounter = 0;
 	selectedArticles = new Set();
-	markers = [];
+	markers = {};
 	marker = undefined;
 	markerGroup = L.featureGroup().addTo(map);
 	markerGroup.on("click", groupLeftClick);
@@ -99,10 +108,12 @@ function reset(){
 	selectedMarker = undefined;
 	responseCounter = 0;
 	
-	$("#description").text(instructionString);
-	$("#headline").text("");
+	$("#description").text(description);
+	$("#headline").text("Wikipedia Round Trip");
 	document.getElementById("thumbnail").src = "https://upload.wikimedia.org/wikipedia/commons/8/80/Wikipedia-logo-v2.svg";
-	
+	document.getElementById("headline").href = "https://www.wikipedia.de/";
+	document.getElementById("rankedArticles").style.display='none';
+	document.getElementById("showMoreArticles").style.visibility='visible';
 	document.getElementById("showMoreArticles").style.display='none';
 	document.getElementById("reset").style.display='none';
 	document.getElementById("calculate").style.display='none';
@@ -115,7 +126,7 @@ var articles = {};
 var rankedArticleIDs = [];
 var displayCounter = 0;
 var selectedArticles = new Set();
-var markers = [];
+var markers = {};
 var marker;
 var markerGroup = L.featureGroup().addTo(map);
 markerGroup.on("click", groupLeftClick);
@@ -152,6 +163,12 @@ function groupRightClick(event) {
 }
 
 function groupLeftClick(event) {
+	var marker = event.layer;
+	showArticle(marker)
+}
+
+function showArticle(marker){
+	document.getElementById("rankedArticles").style.display='none';
 	if(selectedMarker != undefined){
 		var id = selectedMarker.id
 		map.removeLayer(selectedMarker)
@@ -164,8 +181,8 @@ function groupLeftClick(event) {
 		newMarker.addTo(markerGroup).bindTooltip(articles[id]['title']);
 		newMarker.id = id;
 	}
-	selectedMarker = event.layer;
-	var id = event.layer.id;
+	selectedMarker = marker;
+	var id = marker.id;
 	var coords = articles[id]['coordinates'];
 	selectedLat = coords.lat;
 	selectedLon = coords.lon;
@@ -187,10 +204,20 @@ function groupLeftClick(event) {
 	document.getElementById("headline").href = "https://de.wikipedia.org/?curid="+id;
 }
 
+$('body').click(function( event ) {
+	var id = event.target.id;
+	if (id.startsWith("wiki-")){
+		id = id.slice(5)
+		showArticle(markers[id])
+	}
+});
+
 function getArticlesInRange() {
+	map.stopLocate()
 	document.getElementById("loader").style.display='block';
 	document.getElementById("getInitArticles").style.display='none';
-	if(marker != undefined){
+	document.getElementById("rankedArticles").style.display='none';
+	try {
 		lat = marker.getLatLng().lat;
 		lng = marker.getLatLng().lng;
 		searchArticles(function(articleIDs){
@@ -200,16 +227,26 @@ function getArticlesInRange() {
 				completeGeocoords(articleIDs);
 				rankArticles();
 				map.removeLayer(marker)
-				map.setView([ lat, lng ], 14);
+				map.setView([ lat, lng ], 12);
 				addMarkers();
+				$("#description").text("");
+				$("#headline").text("Wikipedia Articles");
+				document.getElementById("headline").href = "https://www.wikipedia.de/";
 				document.getElementById("loader").style.display='none';
 				document.getElementById("showMoreArticles").style.display='inline-block';
 				document.getElementById("reset").style.display='inline-block';
 				document.getElementById("calculate").style.display='inline-block';
 				document.getElementById("calculate").style.visibility="hidden";
+				document.getElementById("rankedArticles").style.display='block';
 			}, articleIDs);
+			if(amountOfArticles == 0){
+				document.getElementById("getInitArticles").style.display='inline-block';
+				document.getElementById("loader").style.display='none';
+			}
 		})
-	}else{
+	}
+	catch(err) {
+		document.getElementById("rankedArticles").style.display='block';
 		document.getElementById("getInitArticles").style.display='inline-block';
 		document.getElementById("loader").style.display='none';
 	}
@@ -221,9 +258,9 @@ function searchArticles(callback){
 		url : "https://de.wikipedia.org/w/api.php?action=query&list=geosearch&gslimit=500&gsradius=10000&gscoord="
 				+ lat + "%7C" + lng + "&format=json",
 		async : true,
+		dataType: 'jsonp',
 		success : function(response) {
 		callback(response['query']['geosearch']);
-		// articleIDs = response['query']['geosearch'];
 		}
 });
 }
@@ -240,12 +277,13 @@ function addMarkers() {
 		var counter = displayCounter;
 		while (counter < (displayCounter + 30) && counter < amountOfArticles) {
 			var articleID = rankedArticleIDs[counter][0];
+			$('#rankedArticles').append("<p id=wiki-" + articleID + ">" + articles[articleID]['title'] + "</p>");
 			var coords = articles[articleID]['coordinates'];
 			if (coords != undefined) {
 				var marker = L.marker([ coords.lat, coords.lon ])
 				marker.addTo(markerGroup).bindTooltip(articles[articleID]['title']);
 				marker.id = articleID;
-				markers.push(marker);
+				markers[articleID] = marker;
 			}else{
 				console.log(articleID)
 			}
@@ -297,6 +335,7 @@ function getContent(callback, ids, numberOfRequests) {
 						+ ids
 						+ "&format=json&exintro=&explaintext=&pithumbsize=300",
 				async : true,
+				dataType: 'jsonp',
 				success : function(response) {
 					articles = Object.assign(response['query']['pages'], articles);
 					responseCounter++;
@@ -336,6 +375,7 @@ function calculateTour() {
 	document.getElementById("showMoreArticles").style.display='none';
 	document.getElementById("reset").style.display='none';
 	document.getElementById("calculate").style.display='none';
+	document.getElementById("rankedArticles").style.display='none';
 	var visitNodesLat = [];
 	var visitNodesLon = [];
 	var selctedIDs = Array.from(selectedArticles);
@@ -346,7 +386,7 @@ function calculateTour() {
 	});
 	var urlString = "/calc/" + visitNodesLat + "/" + visitNodesLon;
 	$.ajax({
-		type : "POST",
+		type : "GET",
 		url : urlString,
 		timeout : 10000,
 		success : function(response) {
@@ -358,15 +398,21 @@ function calculateTour() {
 				map.removeLayer(polyline)
 			}
 			polyline = L.polyline(latlngs, {
-				color : 'red'
+				color : '#a80303'
 			}).addTo(map);
 			map.fitBounds(polyline.getBounds());
+			if(selectedMarker == undefined){
+				document.getElementById("rankedArticles").style.display='block';
+			}
 			document.getElementById("loader").style.display='none';
 			document.getElementById("showMoreArticles").style.display='inline-block';
 			document.getElementById("reset").style.display='inline-block';
 			document.getElementById("calculate").style.display='inline-block';
 		},
 		error: function() {
+			if(selectedMarker == undefined){
+				document.getElementById("rankedArticles").style.display='block';
+			}
 			document.getElementById("loader").style.display='none';
 			document.getElementById("showMoreArticles").style.display='inline-block';
 			document.getElementById("reset").style.display='inline-block';
