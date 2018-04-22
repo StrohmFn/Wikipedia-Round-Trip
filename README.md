@@ -11,9 +11,9 @@ Run the PBFParser.java file with this .pbf files to generate the needed graph da
 (Warning: probably a lot of RAM is needed for parsing, depending on the size of the region)  
 Put the generated files in a 'resources' folder at the projects root level.  
 Now you can start the app using this command:  
-java -jar -Xmx10G wiki-trip.jar__
+java -jar -Xmx10G wiki-trip.jar  
 (Note1: This may take some minutes)  
-(Note2: The app also runs with less RAM, but to guarantee smooth behavior 10 gigabytes are recommended)  
+(Note2: The amount of RAM needed depends on the size of the graph file. At least 8 gigabytes are recommended for the germany graph.)  
 After it finished loading, you should be able to access the app under http://localhost:8080/ using your favorite browser.  
 
 ## Screenshots
