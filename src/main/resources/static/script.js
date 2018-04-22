@@ -388,7 +388,7 @@ function calculateTour() {
 	$.ajax({
 		type : "GET",
 		url : urlString,
-		timeout : 10000,
+		timeout : 20000,
 		success : function(response) {
 			// split the response-string into a path
 			var latlngs = response.split(",").map(function(e) {
