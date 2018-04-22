@@ -20,7 +20,7 @@ After it finished loading, you should be able to access the app under http://loc
 Select location on map.
 ![Alt text](Images/Screenshot1.png?raw=true)
 
-Show nearby artilces.
+Show nearby articles.
 ![Alt text](Images/Screenshot2.png?raw=true)
 
 Show information about specific article.
