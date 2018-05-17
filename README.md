@@ -1,10 +1,10 @@
 # Wikipedia-Round-Trip
 This web application allows to calculate a round trip visiting locations of (german) Wikipedia articles.
 
-For detailed information you are welcome to read the [PAPER](https://github.com/StrohmFn/Wikipedia-Round-Trip/blob/master/Wikipedia%20Round%20Trip.pdf).
+For detailed information you are welcome to read my [PAPER](https://github.com/StrohmFn/Wikipedia-Round-Trip/blob/master/Wikipedia%20Round%20Trip.pdf).
 
-This project uses OpenStreetMap (https://www.openstreetmap.de/) data for calculation and Leaflet (http://leafletjs.com/) for visualization. 
-For this project the Spring Boot (https://spring.io/) framework is used.
+This project uses [OpenStreetMap](https://www.openstreetmap.de/) data for calculation and [eaflet]http://leafletjs.com/) for visualization. 
+For this project the [Spring Boot](https://spring.io/) framework is used.
 
 ## How to use
 For the application to work, a graph file is needed.  
